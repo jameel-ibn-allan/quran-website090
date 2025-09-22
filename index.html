@@ -1,14 +1,336 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
-		<meta name="generator" content="Hostinger Horizons" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hostinger Horizons</title>
-	</head>
-	<body>
-		<div id="root"></div>
-		<script type="module" src="/src/main.jsx"></script>
-	</body>
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- اسم الموقع في شريط المتصفح -->
+    <title>موقع تفسير القرآن الكريم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+        body {
+            font-family: 'Amiri', serif;
+            background-color: #f7fafc;
+        }
+        .bg-custom-dark {
+            background-color: #1a202c;
+        }
+        .text-custom-light {
+            color: #f7fafc;
+        }
+        .rounded-3xl {
+            border-radius: 1.5rem;
+        }
+        .prose-lg p {
+            font-size: 1.125rem;
+            line-height: 1.75;
+        }
+        .word-interpretation-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .word-interpretation {
+            background-color: #f0f4f8;
+            border-left: 4px solid #4a90e2;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+        }
+        .word-interpretation h4 {
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .word-interpretation p {
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+        .answer-btn {
+            background-color: #fff;
+            color: #1a202c;
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            transition-property: background-color, border-color, color;
+            transition-duration: .3s;
+            cursor: pointer;
+            text-align: right;
+        }
+        .answer-btn:hover {
+            background-color: #e2e8f0;
+        }
+        .correct {
+            background-color: #2f855a;
+            color: #fff;
+            border-color: #2f855a;
+        }
+        .incorrect {
+            background-color: #c53030;
+            color: #fff;
+            border-color: #c53030;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-custom-dark text-custom-light shadow-lg py-6 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto text-center">
+            <!-- اسم الموقع الذي يظهر في أعلى الصفحة -->
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-white">موقع تفسير القرآن الكريم</h1>
+            <p class="text-base sm:text-lg opacity-80 mt-2">شرح تفصيلي للآيات من 103 إلى 105</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div id="ayat-container" class="space-y-12">
+            <!-- الآيات سيتم إضافتها هنا بواسطة JavaScript -->
+        </div>
+
+        <!-- Game Section -->
+        <section id="game-section" class="bg-gray-100 rounded-3xl shadow-xl p-6 sm:p-8 mt-12 text-center">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-800">لعبة معاني الآيات</h2>
+            <p class="text-gray-600 mt-2 mb-6">اختبر معلوماتك في معاني سورة آل عمران.</p>
+            
+            <div id="game-container" class="bg-white p-6 rounded-2xl shadow-lg">
+                <div id="question-box" class="mb-4 text-right">
+                    <p id="question-text" class="text-lg font-semibold text-gray-800"></p>
+                </div>
+                <div id="answers-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Buttons will be added here by JavaScript -->
+                </div>
+                <div id="feedback" class="mt-4 text-center font-bold"></div>
+                <div class="flex justify-between items-center mt-6">
+                    <p id="score" class="text-gray-600">النتيجة: 0</p>
+                    <button id="next-button" class="bg-blue-600 text-white py-2 px-6 rounded-lg font-bold hover:bg-blue-700 transition-colors duration-300">السؤال التالي</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-custom-dark text-custom-light py-6 px-4 sm:px-6 lg:px-8 mt-auto">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-sm opacity-75">&copy; 2024 موقع تفسير القرآن الكريم. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        // بيانات الآيات والتفسير التفصيلي
+        const ayas = [
+            {
+                number: 103,
+                text: "وَاعْتَصِمُوا بِحَبْلِ اللَّهِ جَمِيعًا وَلَا تَفَرَّقُوا ۚ وَاذْكُرُوا نِعْمَتَ اللَّهِ عَلَيْكُمْ إِذْ كُنتُمْ أَعْدَاءً فَأَلَّفَ بَيْنَ قُلُوبِكُمْ فَأَصْبَحْتُم بِنِعْمَتِهِ إِخْوَانًا وَكُنتُمْ عَلَىٰ شَفَا حُفْرَةٍ مِّنَ النَّارِ فَأَنقَذَكُم مِّنْهَا ۗ كَذَٰلِكَ يُبَيِّنُ اللَّهُ لَكُمْ آيَاتِهِ لَعَلَّكُمْ تَهْتَدُونَ",
+                image: "https://placehold.co/600x400/5e81ac/ffffff?text=الترابط+والوحدة",
+                details: [
+                    { word: "وَاعْتَصِمُوا", meaning: "تمسّكوا واعتمدوا على الله." },
+                    { word: "بِحَبْلِ اللَّهِ", meaning: "بدين الله وهو القرآن والسنة." },
+                    { word: "جَمِيعًا", meaning: "كلّكم، بلا استثناء." },
+                    { word: "وَلَا تَفَرَّقُوا", meaning: "لا تتفرقوا في دينكم، ولا تكونوا فرقاً وشيعاً." },
+                    { word: "وَاذْكُرُوا نِعْمَتَ اللَّهِ عَلَيْكُمْ", meaning: "تذكّروا فضل الله عليكم بالإسلام." },
+                    { word: "إِذْ كُنتُمْ أَعْدَاءً", meaning: "قبل الإسلام، كنتم متخاصمين." },
+                    { word: "فَأَلَّفَ بَيْنَ قُلُوبِكُمْ", meaning: "جمع بين قلوبكم على المحبة." },
+                    { word: "فَأَصْبَحْتُم بِنِعْمَتِهِ إِخْوَانًا", meaning: "صرتم إخوة متحابّين." },
+                    { word: "وَكُنتُمْ عَلَىٰ شَفَا حُفْرَةٍ مِّنَ النَّارِ", meaning: "كنتم على حافّة الهلاك في النار بسبب الكفر." },
+                    { word: "فَأَنقَذَكُم مِّنْهَا", meaning: "أنجاكم منها بالإسلام." },
+                    { word: "كَذَٰلِكَ يُبَيِّنُ اللَّهُ لَكُمْ آيَاتِهِ", meaning: "مثل هذا البيان يوضح الله لكم آياته." },
+                    { word: "لَعَلَّكُمْ تَهْتَدُونَ", meaning: "لكي تتبعوا الحق." }
+                ]
+            },
+            {
+                number: 104,
+                text: "وَلْتَكُن مِّنكُمْ أُمَّةٌ يَدْعُونَ إِلَى الْخَيْرِ وَيَأْمُرُونَ بِالْمَعْرُوفِ وَيَنْهَوْنَ عَنِ الْمُنكَرِ ۚ وَأُولَٰئِكَ هُمُ الْمُفْلِحُونَ",
+                image: "https://placehold.co/600x400/96d0ac/ffffff?text=الدعوة+إلى+الخير",
+                details: [
+                    { word: "وَلْتَكُن مِّنكُمْ", meaning: "ولتقم جماعة منكم." },
+                    { word: "أُمَّةٌ", meaning: "جماعة من الناس." },
+                    { word: "يَدْعُونَ إِلَى الْخَيْرِ", meaning: "يدعون إلى كل ما يحبه الله." },
+                    { word: "وَيَأْمُرُونَ بِالْمَعْرُوفِ", meaning: "يأمرون بالصلاح في الدين والدنيا." },
+                    { word: "وَيَنْهَوْنَ عَنِ الْمُنكَرِ", meaning: "ينهون عن كل ما يكرهه الله." },
+                    { word: "وَأُولَٰئِكَ هُمُ الْمُفْلِحُونَ", meaning: "هؤلاء هم الفائزون بالسعادة في الدنيا والآخرة." }
+                ]
+            },
+            {
+                number: 105,
+                text: "وَلَا تَكُونُوا كَالَّذِينَ تَفَرَّقُوا وَاخْتَلَفُوا مِن بَعْدِ مَا جَاءَهُمُ الْبَيِّنَاتُ ۚ وَأُولَٰئِكَ لَهُمْ عَذَابٌ عَظِيمٌ",
+                image: "https://placehold.co/600x400/d9534f/ffffff?text=التحذير+من+الفرقة",
+                details: [
+                    { word: "وَلَا تَكُونُوا", meaning: "لا تصبحوا." },
+                    { word: "كَالَّذِينَ تَفَرَّقُوا", meaning: "مثل الذين انقسموا إلى مذاهب." },
+                    { word: "وَاخْتَلَفُوا", meaning: "واختلفوا في دينهم." },
+                    { word: "مِن بَعْدِ مَا جَاءَهُمُ الْبَيِّنَاتُ", meaning: "بعد أن جاءتهم الحجج الواضحة." },
+                    { word: "وَأُولَٰئِكَ لَهُمْ عَذَابٌ عَظِيمٌ", meaning: "هؤلاء لهم عذاب شديد بسبب فرقتهم." }
+                ]
+            }
+        ];
+
+        // Questions and Answers for the game
+        const questions = [
+            {
+                question: "ما معنى كلمة 'وَاعْتَصِمُوا' في الآية 103؟",
+                answers: ["تمسّكوا واعتمدوا على الله.", "اطلبوا العون من بعضكم.", "اجتمعوا على الطعام.", "افترقوا وتخاصموا."],
+                correct: "تمسّكوا واعتمدوا على الله."
+            },
+            {
+                question: "في الآية 103، ما هو 'حَبْلِ اللَّهِ'؟",
+                answers: ["حبل من السماء.", "القرآن والسنة.", "الماء.", "الطريق المستقيم."],
+                correct: "القرآن والسنة."
+            },
+            {
+                question: "ماذا يعني 'فَأَلَّفَ بَيْنَ قُلُوبِكُمْ'؟",
+                answers: ["نشر المحبة بين القلوب.", "أدخل الرعب بين الأعداء.", "أبعدهم عن بعضهم.", "فرق بينهم."],
+                correct: "نشر المحبة بين القلوب."
+            },
+            {
+                question: "من هم 'الْمُفْلِحُونَ' في الآية 104؟",
+                answers: ["الذين يجمعون المال.", "الذين يدرسون الدين.", "الذين يدعون إلى الخير ويأمرون بالمعروف وينهون عن المنكر.", "الذين يبنون المساجد."],
+                correct: "الذين يدعون إلى الخير ويأمرون بالمعروف وينهون عن المنكر."
+            },
+            {
+                question: "ما الذي تحذر منه الآية 105؟",
+                answers: ["الفرقة والاختلاف في الدين.", "الكذب والنفاق.", "السرقة والفساد.", "الخروج عن الأوطان."],
+                correct: "الفرقة والاختلاف في الدين."
+            }
+        ];
+
+        // Game variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // HTML elements
+        const questionText = document.getElementById('question-text');
+        const answersContainer = document.getElementById('answers-container');
+        const feedbackDiv = document.getElementById('feedback');
+        const scoreDiv = document.getElementById('score');
+        const nextButton = document.getElementById('next-button');
+
+        // Function to render the current question
+        function renderQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                endGame();
+                return;
+            }
+
+            const currentQuestion = questions[currentQuestionIndex];
+            questionText.textContent = currentQuestion.question;
+            answersContainer.innerHTML = '';
+            feedbackDiv.textContent = '';
+            nextButton.style.display = 'none';
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.textContent = answer;
+                button.className = 'answer-btn';
+                button.addEventListener('click', () => checkAnswer(answer, currentQuestion.correct));
+                answersContainer.appendChild(button);
+            });
+        }
+
+        // Function to check the selected answer
+        function checkAnswer(selectedAnswer, correctAnswer) {
+            const buttons = answersContainer.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (selectedAnswer === correctAnswer) {
+                feedbackDiv.textContent = 'إجابة صحيحة!';
+                feedbackDiv.className = 'mt-4 text-center font-bold text-green-600';
+                score++;
+            } else {
+                feedbackDiv.textContent = 'إجابة خاطئة.';
+                feedbackDiv.className = 'mt-4 text-center font-bold text-red-600';
+            }
+            scoreDiv.textContent = `النتيجة: ${score}`;
+            nextButton.style.display = 'block';
+        }
+
+        // Function to move to the next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            renderQuestion();
+        }
+
+        // Function to end the game
+        function endGame() {
+            questionText.textContent = 'انتهت اللعبة!';
+            answersContainer.innerHTML = '';
+            feedbackDiv.textContent = `نتيجتك النهائية هي: ${score} من ${questions.length}`;
+            feedbackDiv.className = 'mt-4 text-center font-bold text-blue-600';
+            nextButton.textContent = 'إعادة اللعب';
+            nextButton.style.display = 'block';
+            nextButton.removeEventListener('click', nextQuestion);
+            nextButton.addEventListener('click', resetGame);
+        }
+
+        // Function to reset the game
+        function resetGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            nextButton.textContent = 'السؤال التالي';
+            nextButton.removeEventListener('click', resetGame);
+            nextButton.addEventListener('click', nextQuestion);
+            renderQuestion();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('ayat-container');
+            
+            // Function to render verses and interpretations
+            function renderAyaSection() {
+                container.innerHTML = '';
+                ayas.forEach(aya => {
+                    const ayaCard = document.createElement('div');
+                    ayaCard.className = 'bg-white rounded-3xl shadow-xl p-6 sm:p-8 hover:shadow-2xl transition-shadow duration-300';
+                    
+                    // Full verse text
+                    ayaCard.innerHTML += `
+                        <div class="text-center">
+                            <span class="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full">الآية ${aya.number}</span>
+                        </div>
+                        <p class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-4 leading-relaxed text-right rtl:text-right">
+                            ${aya.text}
+                        </p>
+                    `;
+
+                    // Detailed word-by-word interpretation
+                    const detailsContainer = document.createElement('div');
+                    detailsContainer.className = 'border-t-2 border-gray-200 mt-6 pt-6';
+                    detailsContainer.innerHTML = `<h3 class="text-lg sm:text-xl font-bold text-gray-700 mb-4">التفسير التفصيلي:</h3>`;
+                    
+                    const interpretationWords = document.createElement('div');
+                    interpretationWords.className = 'word-interpretation-container';
+
+                    aya.details.forEach(detail => {
+                        const wordDiv = document.createElement('div');
+                        wordDiv.className = 'word-interpretation';
+                        wordDiv.innerHTML = `
+                            <h4 class="text-lg">${detail.word}</h4>
+                            <p class="mt-1">${detail.meaning}</p>
+                        `;
+                        interpretationWords.appendChild(wordDiv);
+                    });
+
+                    detailsContainer.appendChild(interpretationWords);
+                    ayaCard.appendChild(detailsContainer);
+
+                    // Image
+                    const imageSection = document.createElement('div');
+                    imageSection.className = 'mt-6 text-center';
+                    imageSection.innerHTML = `
+                        <img src="${aya.image}" alt="صورة توضيحية للآية ${aya.number}" class="mx-auto rounded-xl shadow-md">
+                    `;
+                    ayaCard.appendChild(imageSection);
+
+                    container.appendChild(ayaCard);
+                });
+            }
+            
+            // Render the initial verses and the first question
+            renderAyaSection();
+            renderQuestion();
+            nextButton.addEventListener('click', nextQuestion);
+        });
+    </script>
+</body>
 </html>
+
